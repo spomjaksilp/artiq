@@ -385,6 +385,15 @@ class AD9910:
         self.write64(_AD9910_REG_RAMP_LIMIT, upper, lower)
 
     @kernel
+    def write_drg_rate(self, pos, neg):
+        """Write DRG positive/negative slope rate.
+
+        :param pos int16: Positive slope rate.
+        :param neg int16: Negative slope rate.
+        """
+        self.write32(_AD9910_REG_RAMP_RATE, (neg << 16) | pos)
+
+    @kernel
     def set_cfr1(self, power_down=0b0000, phase_autoclear=0,
                  drg_load_lrr=0, drg_autoclear=0,
                  internal_profile=0, ram_destination=0, ram_enable=0,
