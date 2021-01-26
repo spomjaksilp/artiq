@@ -394,6 +394,16 @@ class AD9910:
         self.write32(_AD9910_REG_RAMP_RATE, (neg << 16) | pos)
 
     @kernel
+    def write_drg_step(self, pos, neg):
+        """Write DRG positive/negative slope step in units
+        of 4/f_sysclk, typically 4 ns.
+
+        :param pos int32: Positive slope step.
+        :param neg int32: Negative slope step.
+        """
+        self.write64(_AD9910_REG_RAMP_STEP, neg, pos)
+
+    @kernel
     def set_cfr1(self, power_down=0b0000, phase_autoclear=0,
                  drg_load_lrr=0, drg_autoclear=0,
                  internal_profile=0, ram_destination=0, ram_enable=0,
