@@ -376,6 +376,15 @@ class AD9910:
             data[(n - preload) + i] = self.bus.read()
 
     @kernel
+    def write_drg_limit(self, upper, lower):
+        """Write DRG limits.
+
+        :param upper int32: Upper limit.
+        :param lower int32: Lower limit.
+        """
+        self.write64(_AD9910_REG_RAMP_LIMIT, upper, lower)
+
+    @kernel
     def set_cfr1(self, power_down=0b0000, phase_autoclear=0,
                  drg_load_lrr=0, drg_autoclear=0,
                  internal_profile=0, ram_destination=0, ram_enable=0,
