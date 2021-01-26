@@ -61,6 +61,11 @@ RAM_MODE_BIDIR_RAMP = 2
 RAM_MODE_CONT_BIDIR_RAMP = 3
 RAM_MODE_CONT_RAMPUP = 4
 
+# DRG destination
+DRG_DEST_FTW = 0
+DRG_DEST_POW = 1
+DRG_DEST_ASF = 2
+
 
 class SyncDataUser:
     def __init__(self, core, sync_delay_seed, io_update_delay):
@@ -391,7 +396,7 @@ class AD9910:
         :param osk_enable: Enable OSK mode.
         :param select_auto_osk: Select manual or automatic OSK mode.
         """
-        self.write32(_AD9910_REG_CFR1,
+        self.write32(_AD9910_REG_CFR2,
                      (ram_enable << 31) |
                      (ram_destination << 29) |
                      (manual_osk_external << 23) |
@@ -403,6 +408,59 @@ class AD9910:
                      (select_auto_osk << 8) |
                      (power_down << 4) |
                      2)  # SDIO input only, MSB first
+
+    @kernel
+    def set_cfr2(self, amplitude_scale_enable=0, internal_io_active=0,
+                 sync_clk_enable=0, drg_destination=0, drg_enable=0,
+                 drg_nodwell_high=0, drg_nodwell_low=0,
+                 read_ftw=1, io_rate_control=0, pdclk_enable=0,
+                 pdclk_invert=0, tx_enable_invert=0,
+                 matched_latency_enable=0, data_assembler_hold_last=0,
+                 sync_validation_disable=1, parallel_enable=0, fm_gain=0):
+        """Set CFR2. See the AD9910 datasheet for parameter meanings.
+        This method assumes MSB as set by `set_cfr1()` by default
+
+        This method does not pulse IO_UPDATE.
+
+        :param amplitude_scale_enable: Enable amplitude scale from single
+            tone pofiles.
+        :param internal_io_active: Internal I/O update active.
+        :param sync_clk_enable: SYNC_CLK enable.
+        :param drg_destination: DRG destination.
+            (:const:`DRG_DEST_FTW`, :const:`DRG_DEST_POW`,
+            :const:`DRG_DEST_ASF`).
+        :param drg_enable: DRG enable.
+        :param drg_nodwell_high: DRG no-dwell high.
+        :param drg_nodwell_low: DRG no-dwell low.
+        :param read_ftw: Read effective FTW.
+        :param io_rate_control: I/O update rate control.
+        :param pdclk_enable: PDCLK enable.
+        :param pdclk_invert: PDCLK invert.
+        :param tx_enable_invert: TxEnable invert.
+        :param matched_latency_enable: Matched latency enable.
+        :param data_assembler_hold_last: Data assembler hold last value.
+        :param sync_validation_disable: Sync timing validation disable.
+        :param parallel_enable: Parallel data port enable.
+        :param fm_gain: FM gain.
+        """
+        self.write32(_AD9910_REG_CFR1,
+                     (amplitude_scale_enable << 24) |
+                     (internal_io_active << 23) |
+                     (sync_clk_enable << 22) |
+                     (drg_destination << 20) |
+                     (drg_enable << 19) |
+                     (drg_nodwell_high << 18) |
+                     (drg_nodwell_low << 17) |
+                     (read_ftw << 16) |
+                     (io_rate_control << 14) |
+                     (pdclk_enable << 11) |
+                     (pdclk_invert << 10) |
+                     (tx_enable_invert << 9) |
+                     (matched_latency_enable << 7) |
+                     (data_assembler_hold_last << 6) |
+                     (sync_validation_disable << 5) |
+                     (parallel_enable << 4) |
+                     fm_gain)
 
     @kernel
     def init(self, blind=False):
