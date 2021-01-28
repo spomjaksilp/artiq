@@ -425,7 +425,7 @@ class AD9910:
         :param osk_enable: Enable OSK mode.
         :param select_auto_osk: Select manual or automatic OSK mode.
         """
-        self.write32(_AD9910_REG_CFR2,
+        self.write32(_AD9910_REG_CFR1,
                      (ram_enable << 31) |
                      (ram_destination << 29) |
                      (manual_osk_external << 23) |
@@ -472,7 +472,7 @@ class AD9910:
         :param parallel_enable: Parallel data port enable.
         :param fm_gain: FM gain.
         """
-        self.write32(_AD9910_REG_CFR1,
+        self.write32(_AD9910_REG_CFR2,
                      (amplitude_scale_enable << 24) |
                      (internal_io_active << 23) |
                      (sync_clk_enable << 22) |
